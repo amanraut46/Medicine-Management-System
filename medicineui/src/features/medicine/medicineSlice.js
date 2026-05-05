@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchMedicines, fetchMedicineById, fetchMedicineByName, createMedicine, updateMedicine } from "./medicineThunks";
+import { fetchMedicines, fetchMedicineById, fetchMedicineByName, createMedicine, updateMedicine,deleteMedicine } from "./medicineThunks";
 
 const initialState = {
   medicines: [],
+  selectedMedicine: null,
   loading: false,
   error: null,
 };
@@ -31,10 +32,7 @@ const medicineSlice = createSlice({
             })
             .addCase(fetchMedicineById.fulfilled, (state, action) => {
                 state.loading = false;
-                const index = state.medicines.findIndex(med => med.id === action.payload.id);
-                if (index !== -1) {
-                    state.medicines[index] = action.payload;
-                }
+                state.selectedMedicine = action.payload;
             })
             .addCase(fetchMedicineById.rejected, (state, action) => {
                 state.loading = false;
@@ -69,13 +67,23 @@ const medicineSlice = createSlice({
                 state.error = null;
             })
             .addCase(updateMedicine.fulfilled, (state, action) => {
+                debugger;
                 state.loading = false;
-                const index = state.medicines.findIndex(med => med.id === action.payload.id);
-                if (index !== -1) {
-                    state.medicines[index] = action.payload;
-                }
+                state.selectedMedicine = action.payload;
             })
             .addCase(updateMedicine.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(deleteMedicine.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteMedicine.fulfilled, (state, action) => {
+                state.loading = false;
+                state.medicines = state.medicines.filter(med => med.id !== action.payload);
+            })
+            .addCase(deleteMedicine.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });

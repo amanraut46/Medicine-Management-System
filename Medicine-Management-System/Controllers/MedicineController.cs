@@ -107,6 +107,8 @@ namespace Medicine_Management_System.Controllers
                     return NotFound($"Medicine with ID {id} not found.");
                 }
                 mapper.Map(medicineDto, existingMedicine);
+
+                existingMedicine.Id = id;
                 appDbContext.Medicines.Update(existingMedicine);
                 await appDbContext.SaveChangesAsync();
                 var result = mapper.Map<MedicineDto>(existingMedicine);

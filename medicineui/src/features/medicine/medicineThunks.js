@@ -51,10 +51,12 @@ export const createMedicine = createAsyncThunk(
 //Update
 export const updateMedicine = createAsyncThunk(
   "medicines/update",
-    async ({id, medicineData}, { rejectWithValue }) => {    
+    async ({id, selectedMedicine}, { rejectWithValue }) => {    
         try
-        {   const response = await api.put(`/${id}`, medicineData);
-            return response.data;
+        { 
+          debugger;  
+          const response = await api.put(`/${id}`, selectedMedicine);
+          return response.data;
         }
         catch (error) {
             return rejectWithValue(error.response.data);

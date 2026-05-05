@@ -1,9 +1,9 @@
 import React from 'react'
 import {DataGrid} from '@mui/x-data-grid';
 import { useDispatch,useSelector } from 'react-redux';
-import { fetchMedicines ,fetchMedicineByName} from './features/medicine/medicineThunks';
+import { fetchMedicines ,fetchMedicineByName,deleteMedicine} from './features/medicine/medicineThunks';
 import { useEffect,useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 const isExpiringSoon = (date) => {
   const today = new Date();
   const expiry = new Date(date);
@@ -24,6 +24,7 @@ export default function DisplayMedicine() {
     },
   ]);
   const [searchMedicine, setSearchMedicine] = useState('');
+  const navigation = useNavigate();
   useEffect(() => {
     const sortBy = sortModel[0]?.field || 'name';
     const sortDir = sortModel[0]?.sort || 'asc';
@@ -37,13 +38,47 @@ export default function DisplayMedicine() {
     if (!searchMedicine.trim()) return;
     dispatch(fetchMedicineByName(searchMedicine));
   }, [dispatch,searchMedicine]);
-
+const handleView=(id) => {
+  // navigate to details page
+  navigation(`/medicine/${id}`);
+}
+const handleUpdate=(id) => {
+  navigation(`/updatemedicine/${id}`);
+}
+const handleDelete=(id) => {
+  dispatch(deleteMedicine(id)).then(() => {
+    // Refresh the list after deletion
+    const sortBy = sortModel[0]?.field || 'name';
+    const sortDir = sortModel[0]?.sort || 'asc';
+    dispatch(fetchMedicines({
+      sortBy: sortBy,
+      sortDir: sortDir
+    }));
+  }).catch((err) => {
+    console.error("Failed to delete medicine:", err);
+  });
+}
+const createMedicine = () => {
+  navigation('/addmedicine');
+}
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
   { field: 'brand', headerName: 'Brand', width: 130 },
   { field: 'name', headerName: 'Name', width: 200 },
+  { field: 'price', headerName: 'Price', width: 130 },
   { field: 'quantity', headerName: 'Quantity', width: 130, cellClassName: (params) => isLowStock(params.value) ? 'low-stock' : '' },
   { field: 'expirate_Date', headerName: 'Expiry Date', width: 150, cellClassName: (params) => isExpiringSoon(params.value) ? 'expiring-soon' : '' },
+  { field: 'actions', headerName: 'Actions', width: 250, sortable: false, 
+    filterable: false,
+    disableColumnMenu: true,
+    renderCell: (params) => (
+    <div style={{ display: 'flex', gap: '8px' }}>
+    <button className="btn btn-primary" onClick={() => handleView(params.row.id)}>View</button>
+    <button className="btn btn-warning" onClick={() => handleUpdate(params.row.id)}>Update</button>
+    <button className="btn btn-danger" onClick={() => handleDelete(params.row.id)}>Delete</button>
+    </div>
+  ) },
+  
 ];
   return (
     <div  className="container">
@@ -55,7 +90,7 @@ const columns = [
           onChange={(e) => setSearchMedicine(e.target.value)}
           style={{ width: 240, padding: 8 }}
         />
-        {/* <button className="btn btn-primary ms-2">Add Medicine</button> */}
+        <button className="btn btn-primary ms-2" onClick={createMedicine}>Add Medicine</button>
       </div>
       <DataGrid 
       rows={medicines} 
