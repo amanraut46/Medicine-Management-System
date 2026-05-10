@@ -1,0 +1,48 @@
+services:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-container
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password@123"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+    networks:
+      - medicine-network
+
+  medicine-api:
+    build:
+      context: ./Medicine-Management-System
+      dockerfile: Dockerfile
+    container_name: medicine-app
+    depends_on:
+      - sqlserver
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: "https://+:8081;http://+:8080"
+
+      # HTTPS Certificate settings
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: Password123
+
+      # Optional security headers (basic hardening)
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+    ports:
+      - "5120:8080"
+      - "7292:8081"
+    volumes:
+      # HTTPS certificate mount
+      - ${USERPROFILE}\.aspnet\https:/https/
+    networks:
+      - medicine-network
+    restart: unless-stopped
+
+networks:
+  medicine-network:
+    driver: bridge
+
+volumes:
+  sql-data:
