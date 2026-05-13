@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MedicineMcpServer": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
