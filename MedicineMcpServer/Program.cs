@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder();
 builder.Services.AddHttpClient<MedicineApiService>(client => {
-    client.BaseAddress = new Uri("https://localhost:7292/");
+    client.BaseAddress = new Uri("http://host.docker.internal:7292/");
 });
 
 builder.Services.AddMcpServer()
