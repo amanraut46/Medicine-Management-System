@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Medicine_Management_System.Dto;
 using Medicine_Management_System.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace Medicine_Management_System.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MedicineController : ControllerBase
     {
         private readonly AppDbContext appDbContext;

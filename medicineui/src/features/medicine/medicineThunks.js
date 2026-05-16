@@ -6,7 +6,7 @@ export const fetchMedicines = createAsyncThunk(
   "medicines/fetchAll",
   async (attr_, { rejectWithValue }) => {
     try {
-      const response = await api.get(`?sortBy=${attr_.sortBy}&sortDir=${attr_.sortDir}`);
+      const response = await api.get(`/Medicine?sortBy=${attr_.sortBy}&sortDir=${attr_.sortDir}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -18,7 +18,7 @@ export const fetchMedicineById = createAsyncThunk(
   "medicines/fetchById",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await api.get(`/${id}`);
+      const response = await api.get(`/Medicine/${id}`);
         return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -30,7 +30,7 @@ export const fetchMedicineByName = createAsyncThunk(
   async (name, { rejectWithValue }) => {
     try {
         console.log("Fetching medicine by name:", name);
-        const response = await api.get(`/search?name=${name}`);
+        const response = await api.get(`/Medicine/search?name=${name}`);
         return response.data;
     } catch (error) {
         return rejectWithValue(error.response.data);
@@ -42,7 +42,7 @@ export const createMedicine = createAsyncThunk(
     async (medicineData, { rejectWithValue }) => {
         try 
         {            
-            const response = await api.post("/", medicineData);
+            const response = await api.post("/Medicine", medicineData);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -55,7 +55,7 @@ export const updateMedicine = createAsyncThunk(
         try
         { 
           debugger;  
-          const response = await api.put(`/${id}`, selectedMedicine);
+          const response = await api.put(`/Medicine/${id}`, selectedMedicine);
           return response.data;
         }
         catch (error) {
@@ -67,7 +67,7 @@ export const deleteMedicine = createAsyncThunk(
     "medicines/delete",
     async (id, { rejectWithValue }) => {
         try {
-            await api.delete(`/${id}`);
+            await api.delete(`/Medicine/${id}`);
             return id;
         }
         catch (error) {
